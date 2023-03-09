@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Partial update js</title>
+</head>
+<body>
+    <div>
+        <div id="update">
+            Content
+        </div>
+        <button id="update-content">Update</button>
+    </div>
+    <script>
+        function update(params) {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open(params.method || 'GET', params.url);
+
+            xhr.send();
+
+            xhr.onload = function() {
+                if (xhr.status !== 200) {
+                    if (params.onError) {
+                        params.onError(null);
+                    }
+                } else {
+                    document.getElementById(params.id).innerHTML = xhr.response;
+                }
+            };
+
+            xhr.onerror = function() {
+                if (params.onError) {
+                    params.onError(null);
+                }
+            };
+        }
+
+        function updateContent() {
+            update({
+                url: '/server.php',
+                method: 'POST',
+                params: {
+                    foo: 'bar',
+                },
+                id: 'update',
+                onError: function (err) {
+                    console.log(err);
+                },
+            });
+        }
+
+        document.getElementById('update-content').addEventListener('click', updateContent);
+    </script>
+</body>
+</html>
